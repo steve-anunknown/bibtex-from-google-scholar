@@ -1,16 +1,15 @@
 import os
-import time
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.service import Service
-from bs4 import BeautifulSoup
 
-def get_pdf_filenames(directory):
-    names = [f for f in os.listdir(directory) if f.endswith('.pdf')]
-    # YOU CAN PROCESS THE PDF FILES' NAMES HOWEVER YOU LIKE
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+
+def get_pdf_filenames(pdf_dir):
+    names = [f for f in os.listdir(pdf_dir) if f.endswith('.pdf')]
     # replace dashes with spaces
     names = [name.replace('-', ' ') for name in names]
     return names
@@ -24,6 +23,8 @@ def search_google_scholar(filename, driver):
     )
     search_box.send_keys(filename)
     search_box.send_keys(Keys.RETURN)
+
+
 def get_bibtex_from_search_results(driver):
     try:
         # Wait until the search results are loaded
@@ -51,7 +52,6 @@ def get_bibtex_from_search_results(driver):
             bibtex_text = WebDriverWait(driver, 10).until(
                 EC.visibility_of_element_located((By.TAG_NAME, "pre"))
             ).text
-
             return bibtex_text
         else:
             print("No search results found.")
@@ -60,19 +60,16 @@ def get_bibtex_from_search_results(driver):
         print(f"Error getting BibTeX: {e}")
         return None
 
-def main(directory):
-    pdf_files = get_pdf_filenames(directory)
-    
-    # MAKE SURE TO ADD THE PATH TO YOUR CHROMEDRIVER EXECUTABLE
+
+def main(pdf_dir):
+    pdf_files = get_pdf_filenames(pdf_dir)
     # Initialize the WebDriver
-    service = Service(executable_path='/path/to/chromedriver')
+    service = Service(executable_path='/home/stefanos/Downloads/zips/chromedriver-linux64/chromedriver')
     options = webdriver.ChromeOptions()
     driver = webdriver.Chrome(service=service, options=options)
     driver.implicitly_wait(10)
-
     for pdf_file in pdf_files:
         filename_without_extension = os.path.splitext(pdf_file)[0]
-        
         try:
             search_google_scholar(filename_without_extension, driver)
             bibtex = get_bibtex_from_search_results(driver)
@@ -82,12 +79,11 @@ def main(directory):
                 print(f"No BibTeX found for {pdf_file}")
         except Exception as e:
             print(f"Error processing {pdf_file}: {e}")
-    
     driver.quit()
+
 
 if __name__ == "__main__":
     # for every directory in the present working directory
     for directory in os.listdir(os.getcwd()):
         if os.path.isdir(directory):
             main(directory)
-
