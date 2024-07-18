@@ -3,7 +3,7 @@ A python script that scans the current working directory for directories with pd
 
 # Prerequisites
 
-You need to have python installed as well as Selenium and BeautifulSoup. Also, google chrome as well as chromedriver needs to be installed.
+You need to have python installed as well as Selenium. Also, google chrome as well as chromedriver needs to be installed.
 
 Instructions on how to install python and the above mentioned packages can be found on the web.
 
