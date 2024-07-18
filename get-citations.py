@@ -64,7 +64,7 @@ def get_bibtex_from_search_results(driver):
 def main(pdf_dir):
     pdf_files = get_pdf_filenames(pdf_dir)
     # Initialize the WebDriver
-    service = Service(executable_path='/home/stefanos/Downloads/zips/chromedriver-linux64/chromedriver')
+    service = Service(executable_path='/path/to/chromedriver')
     options = webdriver.ChromeOptions()
     driver = webdriver.Chrome(service=service, options=options)
     driver.implicitly_wait(10)
